@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Radio_StationModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="category">
+    <Key>
+      <PropertyRef Name="Category_Id" />
+    </Key>
+    <Property Name="Category_Id" Type="Int32" Nullable="false" />
+    <Property Name="Station_Category_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Stations" Relationship="Self.FK_Station_category" FromRole="category" ToRole="Station" />
+    <NavigationProperty Name="subcategories" Relationship="Self.FK_subcategory_category" FromRole="category" ToRole="subcategory" />
+  </EntityType>
+  <EntityType Name="Language">
+    <Key>
+      <PropertyRef Name="Language_Id" />
+    </Key>
+    <Property Name="Language_Id" Type="Int16" Nullable="false" />
+    <Property Name="Language_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Stations" Relationship="Self.FK_Station_Language" FromRole="Language" ToRole="Station" />
+  </EntityType>
+  <EntityType Name="Station">
+    <Key>
+      <PropertyRef Name="Station_Id" />
+    </Key>
+    <Property Name="Station_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Subcategory_Id" Type="Int32" Nullable="false" />
+    <Property Name="Category_Id" Type="Int32" Nullable="false" />
+    <Property Name="Station_Name" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Language_Id" Type="Int16" Nullable="false" />
+    <Property Name="Station_Image_Url" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="category" Relationship="Self.FK_Station_category" FromRole="Station" ToRole="category" />
+    <NavigationProperty Name="Language" Relationship="Self.FK_Station_Language" FromRole="Station" ToRole="Language" />
+    <NavigationProperty Name="subcategory" Relationship="Self.FK_Station_subcategory" FromRole="Station" ToRole="subcategory" />
+  </EntityType>
+  <EntityType Name="subcategory">
+    <Key>
+      <PropertyRef Name="Subcategory_Id" />
+    </Key>
+    <Property Name="Subcategory_Id" Type="Int32" Nullable="false" />
+    <Property Name="Category_Id" Type="Int32" Nullable="false" />
+    <Property Name="Station_Type_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="category" Relationship="Self.FK_subcategory_category" FromRole="subcategory" ToRole="category" />
+    <NavigationProperty Name="Stations" Relationship="Self.FK_Station_subcategory" FromRole="subcategory" ToRole="Station" />
+  </EntityType>
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <Association Name="FK_Station_category">
+    <End Role="category" Type="Self.category" Multiplicity="1" />
+    <End Role="Station" Type="Self.Station" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="category">
+        <PropertyRef Name="Category_Id" />
+      </Principal>
+      <Dependent Role="Station">
+        <PropertyRef Name="Category_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_subcategory_category">
+    <End Role="category" Type="Self.category" Multiplicity="1" />
+    <End Role="subcategory" Type="Self.subcategory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="category">
+        <PropertyRef Name="Category_Id" />
+      </Principal>
+      <Dependent Role="subcategory">
+        <PropertyRef Name="Category_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Station_Language">
+    <End Role="Language" Type="Self.Language" Multiplicity="1" />
+    <End Role="Station" Type="Self.Station" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Language">
+        <PropertyRef Name="Language_Id" />
+      </Principal>
+      <Dependent Role="Station">
+        <PropertyRef Name="Language_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Station_subcategory">
+    <End Role="subcategory" Type="Self.subcategory" Multiplicity="1" />
+    <End Role="Station" Type="Self.Station" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="subcategory">
+        <PropertyRef Name="Subcategory_Id" />
+      </Principal>
+      <Dependent Role="Station">
+        <PropertyRef Name="Subcategory_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="Radio_StationEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="categories" EntityType="Self.category" />
+    <EntitySet Name="Languages" EntityType="Self.Language" />
+    <EntitySet Name="Stations" EntityType="Self.Station" />
+    <EntitySet Name="subcategories" EntityType="Self.subcategory" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+    <AssociationSet Name="FK_Station_category" Association="Self.FK_Station_category">
+      <End Role="category" EntitySet="categories" />
+      <End Role="Station" EntitySet="Stations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_subcategory_category" Association="Self.FK_subcategory_category">
+      <End Role="category" EntitySet="categories" />
+      <End Role="subcategory" EntitySet="subcategories" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Station_Language" Association="Self.FK_Station_Language">
+      <End Role="Language" EntitySet="Languages" />
+      <End Role="Station" EntitySet="Stations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Station_subcategory" Association="Self.FK_Station_subcategory">
+      <End Role="subcategory" EntitySet="subcategories" />
+      <End Role="Station" EntitySet="Stations" />
+    </AssociationSet>
+    <FunctionImport Name="sp_alterdiagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="version" Mode="In" Type="Int32" />
+      <Parameter Name="definition" Mode="In" Type="Binary" />
+    </FunctionImport>
+    <FunctionImport Name="sp_creatediagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="version" Mode="In" Type="Int32" />
+      <Parameter Name="definition" Mode="In" Type="Binary" />
+    </FunctionImport>
+    <FunctionImport Name="sp_dropdiagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(Radio_StationModel.sp_helpdiagramdefinition_Result)">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(Radio_StationModel.sp_helpdiagrams_Result)">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_renamediagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="new_diagramname" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="sp_upgraddiagrams" />
+  </EntityContainer>
+  <ComplexType Name="sp_helpdiagramdefinition_Result">
+    <Property Type="Int32" Name="version" Nullable="true" />
+    <Property Type="Binary" Name="definition" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_helpdiagrams_Result">
+    <Property Type="String" Name="Database" Nullable="true" MaxLength="128" />
+    <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
+    <Property Type="Int32" Name="OwnerID" Nullable="false" />
+  </ComplexType>
+</Schema>
